@@ -7,3 +7,4 @@ export const groupContributions = (groupId) =>
 export const updateContribution = (id, payload) =>
   client.put(`/contributions/${id}`, payload).then((r) => r.data.contribution);
 export const deleteContribution = (id) => client.delete(`/contributions/${id}`).then((r) => r.data);
+export const checkContributionStatus = (id) => client.get(`/contributions/${id}/status`).then((r) => r.data);

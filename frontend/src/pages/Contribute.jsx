@@ -6,6 +6,7 @@ import Button from "../components/ui/Button";
 import { useAuth } from "../context/AuthContext";
 import { getGroup } from "../api/groups";
 import { createContribution } from "../api/contributions";
+import { useContributionPolling } from "../hooks/useContributionPolling";
 import { fundTypeMeta } from "../constants/fundTypes";
 import { formatKES } from "../utils/format";
 
@@ -18,23 +19,42 @@ export default function Contribute() {
   const [phone, setPhone] = useState(user?.phone || "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(null);
+  const [contribution, setContribution] = useState(null);
+  const { polling, statusDetail, start, stop, checkOnce } = useContributionPolling();
 
   useEffect(() => {
     getGroup(id).then(setGroup);
-  }, [id]);
+    return () => stop();
+  }, [id, stop]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
     try {
-      const { contribution } = await createContribution({ group_id: Number(id), amount: Number(amount), phone });
-      setSuccess(contribution);
+      const { contribution: created } = await createContribution({
+        group_id: Number(id),
+        amount: Number(amount),
+        phone,
+      });
+      setContribution(created);
+      if (created.status === "pending") {
+        start(created.id, {
+          onResolved: (result) => setContribution((c) => ({ ...c, status: result.state })),
+        });
+      }
     } catch (err) {
       setError(err.response?.data?.error || "Contribution failed. Please try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCheckNow = async () => {
+    const result = await checkOnce(contribution.id);
+    if (result.state !== "pending") {
+      stop();
+      setContribution((c) => ({ ...c, status: result.state }));
     }
   };
 
@@ -54,13 +74,39 @@ export default function Contribute() {
 
         <hr className="my-6 border-basket-ink/10" />
 
-        {success ? (
+        {contribution?.status === "completed" ? (
           <div className="text-center">
             <p className="text-lg font-semibold text-basket-green">Asante! Contribution received.</p>
-            <p className="mt-1 text-sm text-basket-taupe">Ref: {success.mpesa_ref}</p>
+            {contribution.mpesa_ref && <p className="mt-1 text-sm text-basket-taupe">Ref: {contribution.mpesa_ref}</p>}
             <Button variant="outline" className="mt-4" onClick={() => navigate(`/groups/${id}`)}>
               Back to fund
             </Button>
+          </div>
+        ) : contribution?.status === "failed" ? (
+          <div className="text-center">
+            <p className="text-lg font-semibold text-red-700">Transaction didn't go through</p>
+            <p className="mt-1 text-sm text-basket-taupe">{statusDetail}</p>
+            <Button
+              variant="outline"
+              className="mt-4"
+              onClick={() => {
+                setContribution(null);
+                setError("");
+              }}
+            >
+              Try again
+            </Button>
+          </div>
+        ) : contribution ? (
+          <div className="text-center">
+            <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-2 border-basket-green/30 border-t-basket-green" />
+            <p className="text-lg font-semibold text-basket-ink">Check your phone</p>
+            <p className="mt-1 text-sm text-basket-taupe">{statusDetail || "Enter your M-Pesa PIN to complete this contribution."}</p>
+            {!polling && (
+              <Button variant="outline" className="mt-4" onClick={handleCheckNow}>
+                Check status now
+              </Button>
+            )}
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">

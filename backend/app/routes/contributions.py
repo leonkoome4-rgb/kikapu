@@ -9,8 +9,9 @@ from app.models.group import Group
 from app.models.membership import Membership
 from app.models.contribution import Contribution
 from app.models.user import User
-from app.services.mpesa import stk_push
+from app.services.mpesa import stk_push, stk_push_query
 from app.services.notifications import notify_user
+from app.utils.phone import normalize_phone, InvalidPhoneNumber
 
 contributions_bp = Blueprint("contributions", __name__)
 
@@ -41,6 +42,11 @@ def create_contribution():
 
     if not group_id or not amount or not phone:
         return jsonify({"error": "group_id, amount and phone are required"}), 400
+
+    try:
+        phone = normalize_phone(phone)
+    except InvalidPhoneNumber as exc:
+        return jsonify({"error": str(exc)}), 400
 
     group = Group.query.get_or_404(group_id)
     identity = get_jwt_identity()
@@ -106,6 +112,48 @@ def mpesa_callback():
 
     db.session.commit()
     return jsonify({"message": "Processed"})
+
+
+@contributions_bp.get("/<int:contribution_id>/status")
+@jwt_required(optional=True)
+def check_contribution_status(contribution_id):
+    """
+    Actively ask Daraja whether this contribution's STK push succeeded,
+    failed, or is still awaiting the customer's PIN entry — used to resolve
+    a contribution's final state without depending on a callback reaching
+    this server (e.g. when running locally, where Safaricom can't reach
+    localhost).
+    """
+    contribution = Contribution.query.get_or_404(contribution_id)
+    identity = get_jwt_identity()
+
+    is_owner = identity and int(identity) == contribution.user_id
+    is_admin = identity and contribution.group.admin_id == int(identity)
+    # Harambee/public-fund contributors never get a JWT (no login required to
+    # contribute), so allow the same no-auth access for checking status.
+    if not (is_owner or is_admin or contribution.group.is_public):
+        return jsonify({"error": "You do not have access to this contribution"}), 403
+
+    if contribution.status != "pending" or not contribution.checkout_request_id:
+        return jsonify({"contribution": contribution.to_dict(), "state": contribution.status})
+
+    result = stk_push_query(contribution.checkout_request_id)
+
+    if result["state"] == "completed" and contribution.status != "completed":
+        contribution.status = "completed"
+        contribution.mpesa_ref = contribution.mpesa_ref or contribution.checkout_request_id
+        contribution.group.balance = (contribution.group.balance or 0) + contribution.amount
+        db.session.commit()
+        notify_user(
+            contribution.user,
+            f"Kikapu: your contribution of KES {contribution.amount} to '{contribution.group.name}' went through. Asante!",
+            subject="Contribution confirmed",
+        )
+    elif result["state"] == "failed" and contribution.status != "failed":
+        contribution.status = "failed"
+        db.session.commit()
+
+    return jsonify({"contribution": contribution.to_dict(), "state": result["state"], "detail": result["detail"]})
 
 
 @contributions_bp.get("/mine")

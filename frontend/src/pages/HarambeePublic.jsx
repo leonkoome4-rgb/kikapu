@@ -5,6 +5,7 @@ import TextField from "../components/ui/TextField";
 import Button from "../components/ui/Button";
 import { getPublicGroupBySlug } from "../api/groups";
 import { createContribution } from "../api/contributions";
+import { useContributionPolling } from "../hooks/useContributionPolling";
 import { fundTypeMeta } from "../constants/fundTypes";
 import { formatKES } from "../utils/format";
 
@@ -15,29 +16,50 @@ export default function HarambeePublic() {
   const [notFound, setNotFound] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", amount: "" });
   const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [contribution, setContribution] = useState(null);
   const [error, setError] = useState("");
+  const { polling, statusDetail, start, stop, checkOnce } = useContributionPolling();
 
   useEffect(() => {
     getPublicGroupBySlug(slug)
       .then(setGroup)
       .catch(() => setNotFound(true))
       .finally(() => setLoading(false));
-  }, [slug]);
+    return () => stop();
+  }, [slug, stop]);
+
+  const refreshBalance = () => getPublicGroupBySlug(slug).then(({ balance }) => setGroup((g) => ({ ...g, balance })));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSubmitting(true);
     try {
-      await createContribution({ group_id: group.id, ...form });
-      setSuccess(true);
-      const { balance } = await getPublicGroupBySlug(slug);
-      setGroup((g) => ({ ...g, balance }));
+      const { contribution: created } = await createContribution({ group_id: group.id, ...form });
+      setContribution(created);
+      if (created.status === "completed") {
+        await refreshBalance();
+      } else if (created.status === "pending") {
+        start(created.id, {
+          onResolved: async (result) => {
+            setContribution((c) => ({ ...c, status: result.state }));
+            if (result.state === "completed") await refreshBalance();
+          },
+        });
+      }
     } catch (err) {
       setError(err.response?.data?.error || "Something went wrong. Please try again.");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleCheckNow = async () => {
+    const result = await checkOnce(contribution.id);
+    if (result.state !== "pending") {
+      stop();
+      setContribution((c) => ({ ...c, status: result.state }));
+      if (result.state === "completed") await refreshBalance();
     }
   };
 
@@ -89,15 +111,39 @@ export default function HarambeePublic() {
 
           <hr className="my-6 border-basket-ink/10" />
 
-          {success ? (
+          {contribution?.status === "completed" ? (
             <div className="text-center">
               <p className="text-lg font-semibold text-basket-green">Asante! Your contribution was received.</p>
               <button
-                onClick={() => setSuccess(false)}
+                onClick={() => setContribution(null)}
                 className="label-caps mt-4 text-xs text-basket-taupe hover:text-basket-ink"
               >
                 Contribute again
               </button>
+            </div>
+          ) : contribution?.status === "failed" ? (
+            <div className="text-center">
+              <p className="text-lg font-semibold text-red-700">Transaction didn't go through</p>
+              <p className="mt-1 text-sm text-basket-taupe">{statusDetail}</p>
+              <button
+                onClick={() => setContribution(null)}
+                className="label-caps mt-4 text-xs text-basket-taupe hover:text-basket-ink"
+              >
+                Try again
+              </button>
+            </div>
+          ) : contribution ? (
+            <div className="text-center">
+              <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-2 border-basket-green/30 border-t-basket-green" />
+              <p className="text-lg font-semibold text-basket-ink">Check your phone</p>
+              <p className="mt-1 text-sm text-basket-taupe">
+                {statusDetail || "Enter your M-Pesa PIN to complete this contribution."}
+              </p>
+              {!polling && (
+                <Button variant="outline" className="mt-4" onClick={handleCheckNow}>
+                  Check status now
+                </Button>
+              )}
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
