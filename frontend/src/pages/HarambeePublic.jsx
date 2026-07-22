@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Logo from "../components/Logo";
-import Card from "../components/ui/Card";
 import TextField from "../components/ui/TextField";
 import Button from "../components/ui/Button";
 import { getPublicGroupBySlug } from "../api/groups";
@@ -63,9 +62,15 @@ export default function HarambeePublic() {
           <Logo withWordmark className="h-9 w-9" wordmarkClassName="text-xl" />
         </Link>
 
-        <Card>
-          <span className="text-3xl">{meta.icon}</span>
-          <p className="label-caps mt-2 text-[10px] text-basket-gold">{meta.label} · No login required</p>
+        <div className="overflow-hidden rounded-2xl border border-basket-ink/10 bg-white shadow-sm">
+        <div className="relative h-36">
+          <img src={meta.image} alt="" className="h-full w-full object-cover" />
+          <span className="absolute left-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-basket-cream text-lg shadow">
+            {meta.icon}
+          </span>
+        </div>
+        <div className="p-6">
+          <p className="label-caps text-[10px] text-basket-gold">{meta.label} · No login required</p>
           <h1 className="font-display mt-1 text-2xl font-extrabold text-basket-ink">{group.name}</h1>
           {group.description && <p className="mt-2 text-sm text-basket-taupe">{group.description}</p>}
 
@@ -124,7 +129,8 @@ export default function HarambeePublic() {
               </Button>
             </form>
           )}
-        </Card>
+        </div>
+        </div>
       </div>
     </div>
   );

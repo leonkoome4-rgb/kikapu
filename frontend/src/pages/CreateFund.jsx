@@ -61,15 +61,22 @@ export default function CreateFund() {
                 setFundType(fund.value);
                 if (fund.forcePublic) setIsPublic(true);
               }}
-              className={`rounded-2xl border p-4 text-left transition ${
+              className={`overflow-hidden rounded-2xl border text-left transition ${
                 fundType === fund.value
                   ? "border-basket-green bg-basket-green/5 ring-2 ring-basket-green/30"
                   : "border-basket-ink/10 bg-white hover:border-basket-green/40"
               }`}
             >
-              <span className="text-2xl">{fund.icon}</span>
-              <p className="font-display mt-2 font-bold text-basket-ink">{fund.label}</p>
-              <p className="mt-1 text-xs text-basket-taupe">{fund.description}</p>
+              <div className="relative h-20">
+                <img src={fund.image} alt="" className="h-full w-full object-cover" />
+                <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-basket-cream text-base shadow">
+                  {fund.icon}
+                </span>
+              </div>
+              <div className="p-4">
+                <p className="font-display font-bold text-basket-ink">{fund.label}</p>
+                <p className="mt-1 text-xs text-basket-taupe">{fund.description}</p>
+              </div>
             </button>
           ))}
         </div>

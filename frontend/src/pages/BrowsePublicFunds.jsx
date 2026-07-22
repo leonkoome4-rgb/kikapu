@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Logo from "../components/Logo";
-import Card from "../components/ui/Card";
 import { listPublicGroups } from "../api/groups";
 import { fundTypeMeta } from "../constants/fundTypes";
 import { formatKES } from "../utils/format";
@@ -45,37 +44,47 @@ export default function BrowsePublicFunds() {
                 ? Math.min(100, Math.round((group.balance / group.goal_amount) * 100))
                 : null;
               return (
-                <Card key={group.id}>
-                  <span className="text-2xl">{meta.icon}</span>
-                  <h3 className="font-display mt-2 text-lg font-bold text-basket-ink">{group.name}</h3>
-                  <p className="label-caps mt-1 text-[10px] text-basket-gold">{meta.label}</p>
-                  <p className="mt-3 text-2xl font-bold text-basket-green">{formatKES(group.balance)}</p>
-                  {group.goal_amount && (
-                    <>
-                      <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-basket-ink/10">
-                        <div className="h-full rounded-full bg-basket-gold" style={{ width: `${progress}%` }} />
-                      </div>
-                      <p className="mt-1 text-xs text-basket-taupe">
-                        {progress}% of {formatKES(group.goal_amount)} goal
-                      </p>
-                    </>
-                  )}
-                  {group.public_slug ? (
-                    <Link
-                      to={`/harambee/${group.public_slug}`}
-                      className="label-caps mt-4 inline-flex rounded-full bg-basket-green px-4 py-2 text-xs text-basket-cream"
-                    >
-                      Contribute now
-                    </Link>
-                  ) : (
-                    <Link
-                      to="/login"
-                      className="label-caps mt-4 inline-flex rounded-full border border-basket-ink/15 px-4 py-2 text-xs text-basket-ink"
-                    >
-                      Log in to contribute
-                    </Link>
-                  )}
-                </Card>
+                <div
+                  key={group.id}
+                  className="overflow-hidden rounded-2xl border border-basket-ink/10 bg-white shadow-sm"
+                >
+                  <div className="relative h-28">
+                    <img src={meta.image} alt="" className="h-full w-full object-cover" />
+                    <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-basket-cream text-base shadow">
+                      {meta.icon}
+                    </span>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="font-display text-lg font-bold text-basket-ink">{group.name}</h3>
+                    <p className="label-caps mt-1 text-[10px] text-basket-gold">{meta.label}</p>
+                    <p className="mt-3 text-2xl font-bold text-basket-green">{formatKES(group.balance)}</p>
+                    {group.goal_amount && (
+                      <>
+                        <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-basket-ink/10">
+                          <div className="h-full rounded-full bg-basket-gold" style={{ width: `${progress}%` }} />
+                        </div>
+                        <p className="mt-1 text-xs text-basket-taupe">
+                          {progress}% of {formatKES(group.goal_amount)} goal
+                        </p>
+                      </>
+                    )}
+                    {group.public_slug ? (
+                      <Link
+                        to={`/harambee/${group.public_slug}`}
+                        className="label-caps mt-4 inline-flex rounded-full bg-basket-green px-4 py-2 text-xs text-basket-cream"
+                      >
+                        Contribute now
+                      </Link>
+                    ) : (
+                      <Link
+                        to="/login"
+                        className="label-caps mt-4 inline-flex rounded-full border border-basket-ink/15 px-4 py-2 text-xs text-basket-ink"
+                      >
+                        Log in to contribute
+                      </Link>
+                    )}
+                  </div>
+                </div>
               );
             })}
           </div>
