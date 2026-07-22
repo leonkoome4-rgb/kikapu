@@ -1,3 +1,5 @@
+import logging
+
 from flask import Flask, jsonify
 
 from config import Config
@@ -7,6 +9,9 @@ from app.extensions import db, migrate, jwt, bcrypt, cors
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+
+    if not logging.root.handlers:
+        logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 
     db.init_app(app)
     migrate.init_app(app, db)

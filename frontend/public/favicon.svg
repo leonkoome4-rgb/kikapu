@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="14" fill="#FBFAF7"/>
+
+  <!-- handles -->
+  <path d="M20 24C13 20 13 9 21 6" stroke="#7A4B2A" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M44 24C51 20 51 9 43 6" stroke="#7A4B2A" stroke-width="3.2" stroke-linecap="round"/>
+
+  <!-- basket body -->
+  <path d="M14 26L18 50C18.4 52.5 20.5 54 23 54H41C43.5 54 45.6 52.5 46 50L50 26Z" fill="#0B4D3C"/>
+
+  <!-- weave texture -->
+  <path d="M16.2 31H47.8" stroke="#FBFAF7" stroke-opacity="0.35" stroke-width="1.4"/>
+  <path d="M17.4 37H46.6" stroke="#FBFAF7" stroke-opacity="0.35" stroke-width="1.4"/>
+  <path d="M18.6 43H45.4" stroke="#FBFAF7" stroke-opacity="0.35" stroke-width="1.4"/>
+  <path d="M19.8 49H44.2" stroke="#FBFAF7" stroke-opacity="0.35" stroke-width="1.4"/>
+  <path d="M21 26L20 54M28 26L27.3 54M36 26L36.7 54M44 26L45 54" stroke="#FBFAF7" stroke-opacity="0.25" stroke-width="1.2"/>
+
+  <!-- rim trim -->
+  <rect x="13" y="22" width="38" height="6" rx="3" fill="#C98A2C"/>
+  <rect x="13" y="22" width="38" height="2.4" rx="1.2" fill="#0B4D3C"/>
+</svg>
