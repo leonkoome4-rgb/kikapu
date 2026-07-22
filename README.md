@@ -204,19 +204,60 @@ This exceeds the minimum of 8 endpoints (2+ per HTTP method) and 5+ JWT-protecte
 
 ## Deployment
 
-### Backend → Render
+Push this repo to GitHub first — both Render and Vercel/Netlify deploy by connecting to a
+GitHub repo, not by uploading files.
 
-A `render.yaml` blueprint is included at the repo root (Postgres + web service, free tier).
-Point Render at this repo and it will provision both from the blueprint, running
-`flask db upgrade` on every deploy to keep the schema current. Set `FRONTEND_ORIGIN` to your
-deployed frontend URL once it exists. To load demo data on the deployed database, run
-`python seed.py` once from a Render shell (or locally with `DATABASE_URL` pointed at it).
+```bash
+gh repo create kikapu --public --source=. --remote=origin --push
+# or, without gh: create an empty repo on github.com, then
+git remote add origin https://github.com/<you>/kikapu.git
+git push -u origin main
+```
 
-### Frontend → Vercel or Netlify
+### 1. Backend → Render
 
-Both `frontend/vercel.json` and `frontend/netlify.toml` are included with SPA fallback
-routing configured. Set the `VITE_API_URL` build environment variable to your deployed
-backend's `/api` URL.
+1. Go to [dashboard.render.com](https://dashboard.render.com) → **New** → **Blueprint**.
+2. Connect your GitHub account and select the `kikapu` repo. Render will detect
+   `render.yaml` at the repo root and show the `kikapu-api` web service + `kikapu-db`
+   Postgres database it defines — click **Apply**.
+3. Once created, open the `kikapu-api` service → **Environment** and set `FRONTEND_ORIGIN`
+   (you can leave it blank for now and come back after step 2 below). `SECRET_KEY`,
+   `JWT_SECRET_KEY`, and `DATABASE_URL` are already wired up by the blueprint.
+4. Render runs `pip install -r requirements.txt && flask db upgrade` on every deploy, so the
+   schema is created automatically — no manual migration step needed.
+5. Copy the service's public URL (e.g. `https://kikapu-api.onrender.com`) — you'll need it
+   for the frontend. Confirm it's alive: `curl https://kikapu-api.onrender.com/api/health`.
+6. (Optional) To load demo data: open the service's **Shell** tab in the Render dashboard
+   and run `python seed.py`.
+
+> Free-tier Render web services spin down after 15 minutes of inactivity — the first
+> request after idling can take ~30–60s to respond while it wakes up.
+
+### 2. Frontend → Vercel or Netlify
+
+**Vercel:**
+1. Go to [vercel.com/new](https://vercel.com/new), import the `kikapu` GitHub repo.
+2. Set **Root Directory** to `frontend`.
+3. Add an environment variable `VITE_API_URL` = `https://kikapu-api.onrender.com/api`
+   (your Render URL + `/api`).
+4. Deploy. `frontend/vercel.json` handles SPA fallback routing so client-side routes like
+   `/dashboard` don't 404 on refresh.
+
+**Netlify (alternative):**
+1. Go to [app.netlify.com](https://app.netlify.com) → **Add new site** → **Import an existing
+   project**, pick the `kikapu` repo.
+2. Set **Base directory** to `frontend` (build command/publish directory are already defined
+   in `frontend/netlify.toml`).
+3. Add the same `VITE_API_URL` environment variable under **Site settings → Environment
+   variables**.
+4. Deploy.
+
+### 3. Close the loop
+
+Once the frontend has its own URL (e.g. `https://kikapu.vercel.app`), go back to the Render
+service's environment variables and set `FRONTEND_ORIGIN` to that URL, then redeploy the
+backend — this is what allows the browser's CORS preflight to succeed. Verify by logging in
+on the live frontend URL and confirming the dashboard loads.
 
 ## License
 
