@@ -17,8 +17,17 @@ Built by **Group 7** as a Module 5 bootcamp project.
 
 ## Live app
 
-- Frontend: _add deployed URL here_
-- Backend API: _add deployed URL here_
+- Frontend: https://kikapu-kappa.vercel.app
+- Backend API: https://kikapu-api-lbq9.onrender.com/api
+
+Demo login (password `kikapu123` for all): `leon.koome@student.moringaschool.com`,
+`tracy.mboya@student.moringaschool.com`, `densinela.chepngetich@student.moringaschool.com`,
+`allan.kimani@student.moringaschool.com`.
+
+> Note: the backend is on Render's free tier, which spins down after 15 minutes of
+> inactivity — the first request after idle can take 30-50s to wake up. The free
+> PostgreSQL database also expires 30 days after creation (with a 14-day grace period),
+> so seed data will need refreshing if the project stays in use past that window.
 
 ## Fund types
 

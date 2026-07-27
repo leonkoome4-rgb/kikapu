@@ -139,4 +139,4 @@ leaderboard on the group detail page.
 | 2+ one-to-many, 1+ many-to-many | ✅ |
 | README, MIT license, seed script | ✅ |
 | Clean incremental git history | ✅ |
-| Deployed frontend + backend | ⬜ pending hosting step (see README § Deployment) |
+| Deployed frontend + backend | ✅ https://kikapu-kappa.vercel.app · https://kikapu-api-lbq9.onrender.com |
