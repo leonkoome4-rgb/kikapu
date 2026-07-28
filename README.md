@@ -238,6 +238,12 @@ git push -u origin main
    for the frontend. Confirm it's alive: `curl https://kikapu-api.onrender.com/api/health`.
 6. (Optional) To load demo data: open the service's **Shell** tab in the Render dashboard
    and run `python seed.py`.
+7. To enable real M-Pesa STK Push (rather than the local simulated fallback), set these four
+   env vars on the `kikapu-api` service from your Daraja sandbox app's credentials:
+   `MPESA_CONSUMER_KEY`, `MPESA_CONSUMER_SECRET`, `MPESA_PASSKEY`, and `MPESA_CALLBACK_URL`
+   (set this to `https://<your-render-url>/api/contributions/mpesa/callback` — the deployed
+   backend has a real public URL, so unlike local dev, Safaricom can actually reach this
+   callback).
 
 > Free-tier Render web services spin down after 15 minutes of inactivity — the first
 > request after idling can take ~30–60s to respond while it wakes up.
