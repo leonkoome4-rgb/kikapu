@@ -32,7 +32,7 @@ export function AuthProvider({ children }) {
   }, [loadUser]);
 
   const login = async (identifier, password) => {
-    const data = await loginUser({ email: identifier, phone: identifier, password });
+    const data = await loginUser({ email: identifier, password });
     setTokens(data);
     setUser(data.user);
     return data.user;

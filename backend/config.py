@@ -22,7 +22,8 @@ class Config:
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
     JWT_TOKEN_LOCATION = ["headers"]
 
-    FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN", "http://localhost:5173")
+    _frontend_origin = os.environ.get("FRONTEND_ORIGIN", "http://localhost:5173")
+    FRONTEND_ORIGIN = [o.strip() for o in _frontend_origin.split(",")]
 
     MPESA_ENV = os.environ.get("MPESA_ENV", "sandbox")
     MPESA_CONSUMER_KEY = os.environ.get("MPESA_CONSUMER_KEY", "")
