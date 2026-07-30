@@ -1,10 +1,10 @@
 # Kikapu 🧺
 
-**Kikapu** ("basket" in Swahili) is a full-stack group fund and protection platform for Kenyan
+**Kikapu** ("basket" in Swahili) is a full-stack group fund and protection platform for Kenyans
 chamas, emergency funds, weddings, trips, matanga (funeral) contributions, and harambee
 fundraisers. Instead of tracking money through WhatsApp and a notebook, members pool
 contributions into one transparent shared basket — with M-Pesa contributions, live balances,
-and member-approved claims.
+and member-approves claims.
 
 Built by **Group 7** as a Module 5 bootcamp project.
 
@@ -29,7 +29,7 @@ Demo login (password `kikapu123` for all): `leon.koome@student.moringaschool.com
 > PostgreSQL database also expires 30 days after creation (with a 14-day grace period),
 > so seed data will need refreshing if the project stays in use past that window.
 
-## Fund types
+## Fund types:
 
 One schema, six fund types, differentiated by `fund_type` + `is_public` + `goal_amount`:
 
@@ -42,7 +42,7 @@ One schema, six fund types, differentiated by `fund_type` + `is_public` + `goal_
 | Trip | Goal-based | Members only | |
 | Harambee | Goal-based | Public, **no login required to contribute** | |
 
-## Tech stack
+## Tech stack:
 
 - **Frontend:** React (Vite) SPA, React Router, Tailwind CSS — single-page app, no full-page reloads
 - **Backend:** Flask REST API, Flask-JWT-Extended, SQLAlchemy, Flask-Migrate
@@ -63,7 +63,7 @@ kikapu/
 │   └── wsgi.py          App entrypoint
 └── frontend/            React SPA
     └── src/
-        ├── api/          Axios client + endpoint wrappers
+        ├── apis/          Axios client + endpoint wrappers
         ├── context/      Auth context (JWT access/refresh)
         ├── components/   Shared UI (layout, buttons, cards, badges)
         └── pages/        Routed pages
@@ -162,7 +162,7 @@ file a claim, and review it as the fund admin.
 ## Notification service
 
 Notifications are sent through a small provider interface (`app/services/notifications/`)
-so the SMS/email vendor can be swapped per environment without touching business logic:
+so the SMS/emails vendor can be swapped per environment without touching business logic:
 
 - SMS: `console` (dev, logs only), `africastalking`, `twilio`
 - Email: `console` (dev, logs only), `smtp`
