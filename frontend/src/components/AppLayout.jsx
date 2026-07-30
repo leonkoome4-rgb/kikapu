@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 
-export default function AppLayout() {
+export default function Applayout() {
   return (
     <div className="min-h-screen bg-basket-cream">
       <Navbar />
