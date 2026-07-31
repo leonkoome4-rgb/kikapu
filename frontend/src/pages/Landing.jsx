@@ -5,15 +5,15 @@ import { FUND_TYPES } from "../constants/fundTypes";
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-basket-cream">
+    <div className="min-h-screen bg-gradient-to-br from-basket-cream/80 via-white/40 to-basket-mist/50">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-4 py-6 sm:px-6">
         <Logo withWordmark className="h-10 w-10" wordmarkClassName="text-2xl" />
         <nav className="flex items-center gap-3">
-          <Link to="/browse" className="label-caps text-xs text-basket-taupe hover:text-basket-ink">
+          <Link to="/browse" className="label-caps text-xs text-basket-taupe transition hover:text-basket-ink">
             Browse Harambees
           </Link>
           <Link to="/login">
-            <Button variant="outline">Log in</Button>
+            <Button variant="ghost">Log in</Button>
           </Link>
           <Link to="/register">
             <Button variant="primary">Get started</Button>
@@ -21,13 +21,17 @@ export default function Landing() {
         </nav>
       </header>
 
-      <section className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-2">
-        <div className="text-center lg:text-left">
-          <p className="label-caps mb-4 text-xs text-basket-gold">One basket. Total transparency.</p>
-          <h1 className="font-display text-4xl font-extrabold leading-tight text-basket-ink sm:text-6xl">
-            Stop tracking your chama through WhatsApp and a notebook.
+      <section className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-4 py-20 sm:px-6 sm:py-28 lg:grid-cols-2">
+        <div className="text-center lg:text-left animate-fade-in-up">
+          <p className="label-caps mb-4 inline-flex items-center gap-2 rounded-full bg-basket-gold/10 px-4 py-1.5 text-basket-gold">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-basket-gold" />
+            One basket. Total transparency.
+          </p>
+          <h1 className="font-display text-4xl font-extrabold leading-[1.1] tracking-tight text-basket-ink sm:text-5xl lg:text-6xl">
+            Stop tracking your chama <br className="hidden sm:block" />
+            through WhatsApp and a notebook.
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-basket-taupe lg:mx-0">
+          <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-basket-taupe lg:mx-0">
             Kikapu is the shared basket for chamas, emergency funds, weddings, trips, matanga and harambee
             fundraisers — pool contributions via M-Pesa, track the balance in real time, and let members
             file and approve claims transparently.
@@ -44,45 +48,74 @@ export default function Landing() {
               </Button>
             </Link>
           </div>
+          <div className="mt-10 flex items-center justify-center gap-8 text-center lg:justify-start">
+            <div>
+              <p className="font-display text-2xl font-bold text-basket-green">6</p>
+              <p className="text-xs text-basket-taupe">fund types</p>
+            </div>
+            <div className="h-8 w-px bg-basket-ink/10" />
+            <div>
+              <p className="font-display text-2xl font-bold text-basket-green">M-Pesa</p>
+              <p className="text-xs text-basket-taupe">payments</p>
+            </div>
+            <div className="h-8 w-px bg-basket-ink/10" />
+            <div>
+              <p className="font-display text-2xl font-bold text-basket-green">Real-time</p>
+              <p className="text-xs text-basket-taupe">balances</p>
+            </div>
+          </div>
         </div>
-        <div className="relative">
+        <div className="relative animate-fade-in">
           <img
             src="/images/hero-baskets.jpg"
             alt="Handwoven kiondo baskets at a market"
-            className="aspect-[4/3] w-full rounded-3xl object-cover shadow-lg"
+            className="aspect-[4/3] w-full rounded-3xl object-cover shadow-xl shadow-basket-ink/10"
           />
-          <div className="absolute -bottom-5 -left-5 hidden rounded-2xl bg-basket-green px-5 py-4 text-basket-cream shadow-lg sm:block">
-            <p className="label-caps text-[10px] text-basket-gold-light">Fund Balance</p>
+          <div className="absolute -bottom-5 -left-5 hidden animate-scale-in rounded-2xl bg-basket-green px-5 py-4 text-basket-cream shadow-lg shadow-basket-green/20 sm:block">
+            <p className="label-caps text-basket-gold-light">Fund Balance</p>
             <p className="font-display text-xl font-extrabold">Ksh 187,300</p>
           </div>
+          <div className="absolute -top-4 -right-4 hidden h-24 w-24 rounded-full bg-basket-gold/10 sm:block" />
+          <div className="absolute -bottom-6 -right-6 hidden h-16 w-16 rounded-full bg-basket-green/5 sm:block" />
         </div>
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
-        <h2 className="label-caps mb-6 text-center text-xs text-basket-taupe">Six baskets, one platform</h2>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {FUND_TYPES.map((fund) => (
+        <div className="mb-10 text-center">
+          <h2 className="label-caps text-basket-taupe">Six baskets, one platform</h2>
+          <p className="mt-2 font-display text-2xl font-bold text-basket-ink">Choose the fund that fits</p>
+        </div>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {FUND_TYPES.map((fund, i) => (
             <div
               key={fund.value}
-              className="overflow-hidden rounded-2xl border border-basket-ink/10 bg-white shadow-sm"
+              className="group overflow-hidden rounded-2xl border border-basket-ink/8 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-basket-ink/5"
+              style={{ animationDelay: `${i * 80}ms` }}
             >
-              <div className="relative h-32">
-                <img src={fund.image} alt="" className="h-full w-full object-cover" />
-                <span className="absolute left-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-basket-cream text-lg shadow">
+              <div className="relative h-32 overflow-hidden">
+                <img
+                  src={fund.image}
+                  alt=""
+                  className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                />
+                <span className="absolute left-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-lg shadow-sm backdrop-blur-sm transition group-hover:scale-110">
                   {fund.icon}
                 </span>
               </div>
               <div className="p-5">
                 <h3 className="font-display text-lg font-bold text-basket-ink">{fund.label}</h3>
-                <p className="mt-1 text-sm text-basket-taupe">{fund.description}</p>
+                <p className="mt-1.5 text-sm leading-relaxed text-basket-taupe">{fund.description}</p>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      <footer className="border-t border-basket-ink/10 py-8 text-center text-xs text-basket-taupe">
-        Kikapu — built by Group 7, Moringa School Module 5.
+      <footer className="border-t border-basket-ink/8 py-10 text-center">
+        <Logo withWordmark className="mx-auto h-8 w-8" wordmarkClassName="text-lg" />
+        <p className="mt-3 text-xs text-basket-taupe">
+          Kikapu — built by Group 7, Moringa School Module 5.
+        </p>
       </footer>
     </div>
   );

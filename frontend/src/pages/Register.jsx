@@ -30,40 +30,24 @@ export default function Register() {
 
   return (
     <AuthLayout title="Create your basket" subtitle="Join or start pooling money with people you trust.">
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <TextField label="Full name" required value={form.name} onChange={update("name")} placeholder="Jane Wanjiru" />
-        <TextField
-          label="Phone number"
-          required
-          value={form.phone}
-          onChange={update("phone")}
-          placeholder="2547XXXXXXXX"
-        />
-        <TextField
-          label="Email"
-          type="email"
-          required
-          value={form.email}
-          onChange={update("email")}
-          placeholder="you@example.com"
-        />
-        <TextField
-          label="Password"
-          type="password"
-          required
-          minLength={6}
-          value={form.password}
-          onChange={update("password")}
-          placeholder="At least 6 characters"
-        />
-        {error && <p className="text-sm text-red-700">{error}</p>}
+        <TextField label="Phone number" required value={form.phone} onChange={update("phone")} placeholder="2547XXXXXXXX" />
+        <TextField label="Email" type="email" required value={form.email} onChange={update("email")} placeholder="you@example.com" />
+        <TextField label="Password" type="password" required minLength={6} value={form.password} onChange={update("password")} placeholder="At least 6 characters" />
+        {error && (
+          <div className="flex items-center gap-2 rounded-xl bg-red-50 p-3 text-sm text-red-700">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+            {error}
+          </div>
+        )}
         <Button type="submit" loading={loading} className="w-full py-3">
           Create account
         </Button>
       </form>
-      <p className="mt-5 text-center text-sm text-basket-taupe">
+      <p className="mt-6 text-center text-sm text-basket-taupe">
         Already have a basket?{" "}
-        <Link to="/login" className="text-basket-green hover:underline">
+        <Link to="/login" className="font-medium text-basket-green transition hover:text-basket-green-light">
           Log in
         </Link>
       </p>

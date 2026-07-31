@@ -50,8 +50,13 @@ export default function GroupDetail() {
     }
   };
 
-  if (loading) return <p className="text-basket-taupe">Loading fund…</p>;
-  if (!group) return <p className="text-basket-taupe">Fund not found.</p>;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-basket-green/30 border-t-basket-green" />
+      </div>
+    );
+  if (!group) return <p className="py-20 text-center text-basket-taupe">Fund not found.</p>;
 
   const meta = fundTypeMeta(group.fund_type);
   const isAdmin = group.admin_id === user?.id;
@@ -71,12 +76,14 @@ export default function GroupDetail() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-fade-in">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="label-caps text-xs text-basket-gold">{meta.icon} {meta.label}</p>
-          <h1 className="font-display text-3xl font-extrabold text-basket-ink">{group.name}</h1>
-          {group.description && <p className="mt-1 max-w-xl text-basket-taupe">{group.description}</p>}
+          <p className="label-caps inline-flex items-center gap-1.5 rounded-full bg-basket-gold/10 px-3 py-1 text-basket-gold">
+            <span>{meta.icon}</span> {meta.label}
+          </p>
+          <h1 className="font-display mt-2 text-3xl font-extrabold tracking-tight text-basket-ink">{group.name}</h1>
+          {group.description && <p className="mt-1.5 max-w-xl leading-relaxed text-basket-taupe">{group.description}</p>}
         </div>
         <div className="flex flex-wrap gap-3">
           {notAMember && !isAdmin ? (
@@ -96,23 +103,28 @@ export default function GroupDetail() {
         </div>
       </div>
 
-      <Card className="bg-basket-green text-basket-cream">
-        <p className="label-caps text-xs text-basket-gold-light">Fund Balance</p>
-        <p className="font-display mt-2 text-4xl font-extrabold sm:text-5xl">{formatKES(group.balance)}</p>
+      <Card className="relative overflow-hidden bg-gradient-to-br from-basket-green to-basket-green-dark text-basket-cream">
+        <div className="absolute right-0 top-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-basket-cream/5" />
+        <div className="absolute bottom-0 left-0 h-24 w-24 -translate-x-6 translate-y-6 rounded-full bg-basket-cream/5" />
+        <p className="label-caps relative text-basket-gold-light">Fund Balance</p>
+        <p className="font-display relative mt-2 text-4xl font-extrabold sm:text-5xl">{formatKES(group.balance)}</p>
         {group.goal_amount && (
-          <>
-            <div className="mt-4 h-2.5 w-full overflow-hidden rounded-full bg-basket-cream/20">
-              <div className="h-full rounded-full bg-basket-gold" style={{ width: `${progress}%` }} />
+          <div className="relative mt-5">
+            <div className="h-2.5 w-full overflow-hidden rounded-full bg-basket-cream/20">
+              <div className="h-full rounded-full bg-basket-gold transition-all duration-1000" style={{ width: `${progress}%` }} />
             </div>
-            <p className="mt-1 text-sm text-basket-cream/80">
+            <p className="mt-1.5 text-sm text-basket-cream/80">
               {progress}% of {formatKES(group.goal_amount)} goal
             </p>
-          </>
+          </div>
         )}
         {group.public_slug && (
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            <code className="rounded bg-basket-cream/10 px-2 py-1 text-xs">/harambee/{group.public_slug}</code>
-            <button onClick={copyLink} className="label-caps text-xs text-basket-gold-light hover:underline">
+          <div className="relative mt-5 flex flex-wrap items-center gap-3">
+            <code className="rounded-lg bg-basket-cream/10 px-3 py-1.5 text-xs backdrop-blur-sm">/harambee/{group.public_slug}</code>
+            <button
+              onClick={copyLink}
+              className="label-caps text-xs text-basket-gold-light transition hover:text-basket-gold"
+            >
               {copied ? "Copied!" : "Copy public link"}
             </button>
           </div>
@@ -121,20 +133,20 @@ export default function GroupDetail() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <h2 className="label-caps mb-3 text-xs text-basket-taupe">Activity</h2>
+          <h2 className="label-caps mb-4 text-basket-taupe">Activity</h2>
           <Card>
             {activity.length === 0 ? (
-              <p className="text-sm text-basket-taupe">No activity yet.</p>
+              <p className="py-6 text-center text-sm text-basket-taupe">No activity yet.</p>
             ) : (
-              <ul className="divide-y divide-basket-ink/10">
+              <ul className="divide-y divide-basket-ink/8">
                 {activity.map((item) => (
-                  <li key={`${item.type}-${item.id}`} className="flex items-center justify-between py-3">
+                  <li key={`${item.type}-${item.id}`} className="flex items-center justify-between py-3.5 transition hover:bg-basket-mist/50 first:-mt-1.5 first:rounded-t-lg last:rounded-b-lg">
                     <div>
                       <p className="text-sm font-medium text-basket-ink">
                         {item.type === "contribution" ? "Contribution" : "Claim"} ·{" "}
                         {formatKES(item.amount ?? item.amount_requested)}
                       </p>
-                      <p className="text-xs text-basket-taupe">{formatDate(item.date)}</p>
+                      <p className="mt-0.5 text-xs text-basket-taupe">{formatDate(item.date)}</p>
                     </div>
                     <Badge status={item.status} />
                   </li>
@@ -145,16 +157,16 @@ export default function GroupDetail() {
         </div>
 
         <div>
-          <h2 className="label-caps mb-3 text-xs text-basket-taupe">Members ({members.length})</h2>
+          <h2 className="label-caps mb-4 text-basket-taupe">Members ({members.length})</h2>
           <Card>
             {notAMember ? (
-              <p className="text-sm text-basket-taupe">Join this fund to see its members.</p>
+              <p className="py-4 text-center text-sm text-basket-taupe">Join this fund to see its members.</p>
             ) : (
-              <ul className="space-y-3">
+              <ul className="space-y-1">
                 {members.map((m) => (
-                  <li key={m.id} className="flex items-center justify-between text-sm">
-                    <span className="text-basket-ink">{m.user.name}</span>
-                    <span className="label-caps text-[10px] text-basket-taupe">{m.role}</span>
+                  <li key={m.id} className="flex items-center justify-between rounded-lg px-3 py-2.5 text-sm transition hover:bg-basket-mist/50">
+                    <span className="font-medium text-basket-ink">{m.user.name}</span>
+                    <span className="label-caps rounded-full bg-basket-ink/5 px-2.5 py-0.5 text-basket-taupe">{m.role}</span>
                   </li>
                 ))}
               </ul>
