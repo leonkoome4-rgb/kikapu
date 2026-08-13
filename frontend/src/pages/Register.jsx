@@ -1,56 +1,84 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import AuthLayout from "../components/AuthLayout";
-import TextField from "../components/ui/TextField";
-import Button from "../components/ui/Button";
-import { useAuth } from "../context/AuthContext";
+import React, { useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 
-export default function Register() {
-  const { register } = useAuth();
-  const navigate = useNavigate();
-  const [form, setForm] = useState({ name: "", phone: "", email: "", password: "" });
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+function AvatarPreview() {
+  const ref = useRef(null);
 
-  const update = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-    try {
-      await register(form);
-      navigate("/dashboard", { replace: true });
-    } catch (err) {
-      setError(err.response?.data?.error || "Unable to create your account. Please try again.");
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (!window.customElements || !window.customElements.get('model-viewer')) {
+      const s = document.createElement('script');
+      s.type = 'module';
+      s.src = 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js';
+      document.head.appendChild(s);
+      return () => { document.head.removeChild(s); };
     }
-  };
+    return undefined;
+  }, []);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (el) {
+      el.setAttribute('camera-controls', '');
+      el.setAttribute('auto-rotate', '');
+      el.setAttribute('exposure', '1');
+    }
+  }, []);
 
   return (
-    <AuthLayout title="Create your basket" subtitle="Join or start pooling money with people you trust.">
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <TextField label="Full name" required value={form.name} onChange={update("name")} placeholder="Jane Wanjiru" />
-        <TextField label="Phone number" required value={form.phone} onChange={update("phone")} placeholder="2547XXXXXXXX" />
-        <TextField label="Email" type="email" required value={form.email} onChange={update("email")} placeholder="you@example.com" />
-        <TextField label="Password" type="password" required minLength={6} value={form.password} onChange={update("password")} placeholder="At least 6 characters" />
-        {error && (
-          <div className="flex items-center gap-2 rounded-xl bg-red-50 p-3 text-sm text-red-700">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
-            {error}
+    <>
+      <model-viewer
+        ref={ref}
+        src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
+        alt="3D Avatar"
+        style={{ width: 280, height: 280 }}
+      />
+      <div className="mt-3 text-sm text-gray-400">3D Avatar Preview</div>
+    </>
+  );
+}
+
+export default function Register() {
+  return (
+    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#00d85a" }}>
+      <div className="w-[920px] max-w-full h-[560px] rounded-3xl shadow-2xl overflow-hidden flex" style={{ boxShadow: "0 20px 60px rgba(0,0,0,0.18)" }}>
+        {/* Left: Avatar preview container */}
+        <div className="w-1/2 bg-white/80 flex items-center justify-center p-8">
+          <div className="w-full h-full rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-300">
+            {/* 3D avatar preview using model-viewer */}
+            <div className="text-center">
+              {/* model-viewer is a web component; we load its script dynamically */}
+              <AvatarPreview />
+            </div>
           </div>
-        )}
-        <Button type="submit" loading={loading} className="w-full py-3">
-          Create account
-        </Button>
-      </form>
-      <p className="mt-6 text-center text-sm text-basket-taupe">
-        Already have a basket?{" "}
-        <Link to="/login" className="font-medium text-basket-green transition hover:text-basket-green-light">
-          Log in
-        </Link>
-      </p>
-    </AuthLayout>
+        </div>
+
+        {/* Right: Registration multi-step card (static first step) */}
+        <div className="w-1/2 bg-white p-10 flex flex-col justify-center">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-2">Register Now</h2>
+          <p className="text-sm text-gray-500 mb-6">Create your account — step 1 of 3</p>
+
+          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-2">First Name</label>
+                <input aria-label="First Name" placeholder="Jane" className="w-full rounded-md border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-600" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-2">Last Name</label>
+                <input aria-label="Last Name" placeholder="Wanjiru" className="w-full rounded-md border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-600" />
+              </div>
+            </div>
+
+            <div>
+              <button className="w-full bg-[#0b4d3c] hover:bg-[#0f6b53] text-white font-semibold py-3 rounded-md tracking-wider">NEXT</button>
+            </div>
+          </form>
+
+          <p className="mt-6 text-sm text-gray-500">
+            Already have an account? <Link to="/login" className="text-green-700 font-medium">Log in</Link>
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -3,6 +3,10 @@ from app.extensions import db
 
 FUND_TYPES = ["chama", "emergency", "matanga", "wedding", "trip", "harambee"]
 
+# Fund types where claims are fast-tracked (auto-approved) instead of waiting
+# on manual admin review, per the product spec.
+FAST_TRACKED_FUND_TYPES = {"matanga", "emergency"}
+
 
 class Group(db.Model):
     __tablename__ = "groups"

@@ -56,11 +56,12 @@ kikapu/
 ├── backend/            Flask REST API
 │   ├── app/
 │   │   ├── models/      SQLAlchemy models
-│   │   ├── routes/      Blueprints (auth, groups, contributions, claims, notifications)
+│   │   ├── routes/      Blueprints (auth, groups, contributions, claims, notifications, ussd)
 │   │   ├── services/    M-Pesa Daraja client + pluggable notification service
 │   │   └── utils/       Password reset token helpers
 │   ├── seed.py          Demo data seed script
-│   └── wsgi.py          App entrypoint
+│   ├── main.py          Dev entrypoint (starts ngrok tunnel when NGROK_AUTHTOKEN set)
+│   └── wsgi.py          Production WSGI entrypoint (gunicorn wsgi:app)
 └── frontend/            React SPA
     └── src/
         ├── apis/          Axios client + endpoint wrappers
@@ -93,6 +94,10 @@ Relationships:
 5. Group admin approves/rejects pending claims
 6. A notification is sent via the pluggable notification service (SMS + email, swappable per environment variable)
 
+No smartphone? Dial the **USSD** shortcode (`*384*100#` by default) to browse
+public funds, contribute with M-Pesa, check your balances and file claims —
+see [the USSD section](#ussd-channel) below.
+
 ## Getting started
 
 ### Prerequisites
@@ -110,12 +115,18 @@ source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 cp .env.example .env             # edit as needed
 python seed.py                   # creates tables + seeds the local database with demo data
-python wsgi.py                   # runs on http://localhost:5000
+python main.py                   # runs on http://localhost:5000
 ```
 
 > **macOS note:** port 5000 is often claimed by AirPlay Receiver. If you see
 > "Address already in use", either disable AirPlay Receiver in System Settings
 > or run on another port: `python -c "from app import create_app; create_app().run(port=5001)"`.
+
+> **Exposing callbacks (M-Pesa / USSD):** set `NGROK_AUTHTOKEN` in
+> `backend/.env` and run `python main.py` — it auto-starts an ngrok tunnel,
+> prints the public URL, and repoints `MPESA_CALLBACK_URL` at it so Safaricom
+> and Africa's Talking can reach your local machine. Paste the printed
+> `https://<id>.ngrok.app/api/ussd` into the AT dashboard as the USSD callback.
 
 Seeded demo accounts (password `kikapu123` for all):
 
@@ -152,6 +163,7 @@ file a claim, and review it as the fund admin.
 | `MPESA_*` | Daraja sandbox/production credentials (STK push simulated when unset) |
 | `SMS_PROVIDER` | `console` \| `africastalking` \| `twilio` |
 | `EMAIL_PROVIDER` | `console` \| `smtp` |
+| `USSD_CODE` | The USSD shortcode shown in the UI (default `*384*100#`) |
 
 ### Frontend (`frontend/.env.local`)
 
@@ -200,8 +212,46 @@ All endpoints are prefixed with `/api`. JSON in, JSON out — no server-rendered
 | PUT | `/claims/:id` | ✅ (admin) | Approve / reject |
 | DELETE | `/claims/:id` | ✅ | Withdraw my pending claim |
 | GET / PUT | `/notifications/preferences` | ✅ | SMS/email toggles |
+| POST | `/ussd` | – | Africa's Talking USSD callback (form-encoded) |
 
 This exceeds the minimum of 8 endpoints (2+ per HTTP method) and 5+ JWT-protected endpoints.
+
+## USSD channel
+
+Kikapu exposes a USSD menu over [Africa's Talking USSD](https://developers.africastalking.com/docs/ussd/overview),
+so members without smartphones (or with no data bundle) can interact with their
+funds by dialing a shortcode. AT POSTs the session (`sessionId`, `phoneNumber`,
+`serviceCode`, `text`) form-encoded to the callback, and we reply with plain text
+beginning with `CON` (keep the session open) or `END` (terminate it).
+
+```text
+Welcome to Kikapu. Your shared basket.   ← dial *384*100#
+1. Browse public funds
+2. Contribute
+3. My funds
+4. File a claim
+```
+
+| Menu path | Response |
+|---|---|
+| (dial in) | Main menu |
+| `1` | List public funds |
+| `2` | Enter the fund ID |
+| `2*<fund_id>` | Enter amount in KES |
+| `2*<fund_id>*<amount>` | Triggers an M-Pesa STK push to the caller's number |
+| `3` | List my funds (name + balance) |
+| `3*<fund_id>` | Single fund balance |
+| `4` | Enter the fund ID |
+| `4*<fund_id>*<amount>*<reason>` | Files a claim (fast-tracked on emergency/matanga) |
+
+Callers are matched to their account by phone number, so contributions and
+claims go straight to the right user. Contributing to a **public** fund from an
+unknown number creates a guest account (no login needed), while private funds
+require an existing membership.
+
+**Setup:** in the Africa's Talking dashboard, create a USSD service code and set
+its callback URL to `https://<your-backend-url>/api/ussd`. The app itself only
+uses `USSD_CODE` to display the shortcode in the UI — routing is handled by AT.
 
 ## Frontend routes
 

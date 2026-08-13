@@ -5,16 +5,12 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.extensions import db
-from app.models.group import Group
+from app.models.group import Group, FAST_TRACKED_FUND_TYPES
 from app.models.membership import Membership
 from app.models.claim import Claim
 from app.services.notifications import notify_user
 
 claims_bp = Blueprint("claims", __name__)
-
-# Fund types where claims get fast-tracked (auto-approved) rather than
-# waiting on manual admin review, per the product spec.
-FAST_TRACKED_FUND_TYPES = {"matanga", "emergency"}
 
 
 def _membership_for(user_id, group_id):

@@ -111,6 +111,22 @@ export default function Landing() {
         </div>
       </section>
 
+      <section className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
+        <div className="flex flex-col items-center justify-between gap-6 rounded-3xl border border-basket-ink/8 bg-basket-green px-8 py-10 text-center sm:flex-row sm:text-left">
+          <div>
+            <p className="label-caps mb-4 text-basket-gold-light">No smartphone? No problem</p>
+            <h2 className="font-display text-2xl font-bold text-basket-cream">Manage your funds over USSD</h2>
+            <p className="mt-2 max-w-xl text-sm leading-relaxed text-basket-cream/80">
+              Dial the code on any phone to browse public funds, contribute with M-Pesa,
+              check your balances and file claims — no data bundle needed.
+            </p>
+          </div>
+          <div className="shrink-0 rounded-2xl bg-basket-cream px-7 py-4 font-display text-xl font-extrabold tracking-wider text-basket-green shadow-lg shadow-basket-ink/10">
+            *384*100#
+          </div>
+        </div>
+      </section>
+
       <footer className="border-t border-basket-ink/8 py-10 text-center">
         <Logo withWordmark className="mx-auto h-8 w-8" wordmarkClassName="text-lg" />
         <p className="mt-3 text-xs text-basket-taupe">

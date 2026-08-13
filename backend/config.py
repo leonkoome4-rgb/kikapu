@@ -1,4 +1,4 @@
-dd import os
+import os
 from datetime import timedelta
 from dotenv import load_dotenv
 
@@ -31,6 +31,10 @@ class Config:
     MPESA_SHORTCODE = os.environ.get("MPESA_SHORTCODE", "174379")
     MPESA_PASSKEY = os.environ.get("MPESA_PASSKEY", "")
     MPESA_CALLBACK_URL = os.environ.get("MPESA_CALLBACK_URL", "")
+
+    # Shortcode users dial (e.g. *384*100#). Displayed in the UI/docs; the
+    # code itself is issued and routed by the USSD aggregator (Africa's Talking).
+    USSD_CODE = os.environ.get("USSD_CODE", "*384*100#")
 
     SMS_PROVIDER = os.environ.get("SMS_PROVIDER", "console")
     EMAIL_PROVIDER = os.environ.get("EMAIL_PROVIDER", "console")

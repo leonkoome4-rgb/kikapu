@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register Now | Multi-Step Registration</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+  <!-- Google Model Viewer (3D Character) -->
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <main class="page">
+    <section class="card" id="registerCard">
+      <!-- ============ LEFT COLUMN : 3D CHARACTER ============ -->
+      <div class="card-left" id="sceneWrap">
+        <div class="scene-header">
+          <span class="brand-pill"><i class="fa-solid fa-users"></i> Kikapu</span>
+        </div>
+
+        <div class="model-stage" id="modelStage">
+          <model-viewer
+            id="character"
+            src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
+            alt="Animated 3D character"
+            camera-controls
+            auto-rotate
+            rotation-per-second="12deg"
+            shadow-intensity="1"
+            exposure="1.1"
+            loading="eager"
+            reveal="auto"
+          >
+            <div class="model-fallback" slot="poster">
+              <i class="fa-solid fa-user-astronaut"></i>
+            </div>
+          </model-viewer>
+
+          <div class="glow-ring" aria-hidden="true"></div>
+          <div class="stage-shadow" aria-hidden="true"></div>
+        </div>
+
+        <div class="scene-caption">
+          <h2>Join the community</h2>
+          <p>Create your account in a few simple steps – it only takes a minute.</p>
+          <div class="trust-row">
+            <div class="avatars">
+              <span style="--h:204;--s:70%;--l:45%">A</span>
+              <span style="--h:280;--s:60%;--l:50%">B</span>
+              <span style="--h:18;--s:80%;--l:55%">C</span>
+              <span style="--h:150;--s:60%;--l:40%">D</span>
+            </div>
+            <span class="trust-text"><strong>12,500+</strong> members already onboard</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ RIGHT COLUMN : MULTI-STEP FORM ============ -->
+      <div class="card-right">
+        <header class="form-header">
+          <h1>Register Now</h1>
+          <p class="subtitle">Let's get you set up</p>
+
+          <!-- Step Progress -->
+          <div class="progress" id="progress" aria-label="Form steps">
+            <div class="progress-bar"><span id="progressFill"></span></div>
+            <div class="steps">
+              <div class="step is-active" data-step="0">
+                <span class="step-num">1</span>
+                <span class="step-label">Account</span>
+              </div>
+              <div class="step" data-step="1">
+                <span class="step-num">2</span>
+                <span class="step-label">Details</span>
+              </div>
+              <div class="step" data-step="2">
+                <span class="step-num">3</span>
+                <span class="step-label">Security</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <form id="registerForm" novalidate>
+          <!-- STEP 1 -->
+          <div class="form-step is-active" data-step="0">
+            <div class="field-group">
+              <div class="field">
+                <label for="firstName">First Name</label>
+                <div class="input-wrap">
+                  <i class="fa-regular fa-user"></i>
+                  <input type="text" id="firstName" name="firstName" placeholder="John" autocomplete="given-name" />
+                </div>
+              </div>
+              <div class="field">
+                <label for="lastName">Last Name</label>
+                <div class="input-wrap">
+                  <i class="fa-regular fa-user"></i>
+                  <input type="text" id="lastName" name="lastName" placeholder="Doe" autocomplete="family-name" />
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label for="email">Email Address</label>
+              <div class="input-wrap">
+                <i class="fa-regular fa-envelope"></i>
+                <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email" />
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 2 -->
+          <div class="form-step" data-step="1">
+            <div class="field">
+              <label for="phone">Phone Number</label>
+              <div class="input-wrap">
+                <i class="fa-solid fa-phone"></i>
+                <input type="tel" id="phone" name="phone" placeholder="+1 555 000 1234" autocomplete="tel" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="country">Country</label>
+              <div class="input-wrap">
+                <i class="fa-solid fa-globe"></i>
+                <select id="country" name="country">
+                  <option value="" disabled selected>Select your country</option>
+                  <option value="KE">Kenya</option>
+                  <option value="US">United States</option>
+                  <option value="UK">United Kingdom</option>
+                  <option value="NG">Nigeria</option>
+                  <option value="ZA">South Africa</option>
+                  <option value="IN">India</option>
+                </select>
+                <i class="fa-solid fa-chevron-down select-arrow"></i>
+              </div>
+            </div>
+            <div class="field">
+              <label for="dob">Date of Birth</label>
+              <div class="input-wrap">
+                <i class="fa-regular fa-calendar"></i>
+                <input type="date" id="dob" name="dob" />
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 3 -->
+          <div class="form-step" data-step="2">
+            <div class="field">
+              <label for="password">Password</label>
+              <div class="input-wrap">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="new-password" />
+                <button type="button" class="toggle-pass" data-target="password" aria-label="Show password">
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </div>
+            </div>
+            <div class="field">
+              <label for="confirmPassword">Confirm Password</label>
+              <div class="input-wrap">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="••••••••" autocomplete="new-password" />
+                <button type="button" class="toggle-pass" data-target="confirmPassword" aria-label="Show password">
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </div>
+            </div>
+            <div class="terms">
+              <label class="checkbox">
+                <input type="checkbox" id="terms" name="terms" />
+                <span class="checkmark"><i class="fa-solid fa-check"></i></span>
+                <span>I agree to the <a href="#">Terms</a> & <a href="#">Privacy Policy</a></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Navigation -->
+          <div class="form-nav">
+            <button type="button" class="btn btn-ghost" id="prevBtn" hidden>
+              <i class="fa-solid fa-arrow-left"></i> Back
+            </button>
+            <button type="button" class="btn btn-primary" id="nextBtn">
+              Next <i class="fa-solid fa-arrow-right"></i>
+            </button>
+            <button type="submit" class="btn btn-primary" id="submitBtn" hidden>
+              <i class="fa-solid fa-rocket"></i> Create Account
+            </button>
+          </div>
+        </form>
+
+        <p class="login-link">
+          Already have an account? <a href="#">Login</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Success overlay -->
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-card">
+      <div class="success-icon"><i class="fa-solid fa-check"></i></div>
+      <h2>Welcome aboard! 🎉</h2>
+      <p>Your account has been created successfully.</p>
+      <button class="btn btn-primary" onclick="location.reload()">Start Over</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+</task_progress>
+- [x] Create index.html
+- [ ] Create style.css
+- [ ] Create script.js
+- [ ] Verify implementation
+</write_to_file>

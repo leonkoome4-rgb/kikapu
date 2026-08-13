@@ -1,0 +1,772 @@
+/* ============================================================
+   Multi-Step Registration Card UI
+   Vibrant green / emerald background + split card layout
+   ============================================================ */
+
+:root {
+  --emerald-50: #ecfdf5;
+  --emerald-100: #d1fae5;
+  --emerald-200: #a7f3d0;
+  --emerald-300: #6ee7b7;
+  --emerald-400: #34d399;
+  --emerald-500: #10b981;
+  --emerald-600: #059669;
+  --emerald-700: #047857;
+  --emerald-800: #065f46;
+  --emerald-900: #064e3b;
+
+  --ink-900: #0f172a;
+  --ink-700: #334155;
+  --ink-500: #64748b;
+  --ink-300: #cbd5e1;
+  --ink-200: #e2e8f0;
+  --ink-100: #f1f5f9;
+
+  --white: #ffffff;
+  --danger: #ef4444;
+
+  --radius-lg: 28px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+
+  --shadow-card: 0 30px 60px -12px rgba(2, 44, 34, 0.35),
+                 0 18px 36px -18px rgba(2, 44, 34, 0.25);
+  --shadow-input: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-focus: 0 0 0 4px rgba(16, 185, 129, 0.15);
+
+  --font: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+/* ---------- Reset ---------- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--font);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.25rem;
+  background: linear-gradient(135deg, #059669 0%, #10b981 45%, #34d399 100%);
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ---------- Animated background orbs ---------- */
+.bg-decoration {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.5;
+  animation: float 12s ease-in-out infinite;
+}
+
+.orb-1 {
+  width: 420px;
+  height: 420px;
+  background: rgba(255, 255, 255, 0.18);
+  top: -120px;
+  left: -100px;
+}
+
+.orb-2 {
+  width: 360px;
+  height: 360px;
+  background: rgba(6, 78, 59, 0.35);
+  bottom: -100px;
+  right: -80px;
+  animation-delay: -4s;
+}
+
+.orb-3 {
+  width: 240px;
+  height: 240px;
+  background: rgba(255, 255, 255, 0.12);
+  top: 50%;
+  left: 60%;
+  animation-delay: -8s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-30px) scale(1.05); }
+}
+
+/* ---------- Page / Card layout ---------- */
+.page {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1080px;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  min-height: 640px;
+}
+
+/* ============================================================
+   LEFT COLUMN — 3D Character Scene
+   ============================================================ */
+.card-left {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+  padding: 1.75rem 1.75rem 2rem;
+  overflow: hidden;
+}
+
+.scene-header {
+  display: flex;
+  justify-content: flex-start;
+  z-index: 2;
+}
+
+.brand-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--white);
+  color: var(--emerald-700);
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(2, 44, 34, 0.08);
+}
+
+.brand-pill i {
+  font-size: 0.85rem;
+}
+
+/* Model stage */
+.model-stage {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+  z-index: 1;
+}
+
+model-viewer {
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  --poster-color: transparent;
+  --progress-bar-color: var(--emerald-500);
+  --progress-mask: transparent;
+  --progress-container-color: rgba(16, 185, 129, 0.15);
+}
+
+.model-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 5rem;
+  color: var(--emerald-400);
+}
+
+.glow-ring {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.18) 0%, transparent 70%);
+  bottom: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.stage-shadow {
+  position: absolute;
+  bottom: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(2, 44, 34, 0.18) 0%, transparent 70%);
+  filter: blur(4px);
+  pointer-events: none;
+}
+
+/* Scene caption */
+.scene-caption {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.scene-caption h2 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--ink-900);
+  margin-bottom: 0.4rem;
+}
+
+.scene-caption p {
+  font-size: 0.9rem;
+  color: var(--ink-500);
+  line-height: 1.5;
+  max-width: 280px;
+  margin: 0 auto 1.25rem;
+}
+
+.trust-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.avatars {
+  display: flex;
+}
+
+.avatars span {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff;
+  background: hsl(var(--h), var(--s), var(--l));
+  border: 2px solid var(--white);
+  margin-left: -8px;
+}
+
+.avatars span:first-child {
+  margin-left: 0;
+}
+
+.trust-text {
+  font-size: 0.8rem;
+  color: var(--ink-500);
+}
+
+.trust-text strong {
+  color: var(--ink-900);
+}
+
+/* ============================================================
+   RIGHT COLUMN — Form
+   ============================================================ */
+.card-right {
+  display: flex;
+  flex-direction: column;
+  padding: 2.5rem 2.75rem 2rem;
+  background: var(--white);
+}
+
+.form-header {
+  margin-bottom: 1.75rem;
+}
+
+.form-header h1 {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--ink-900);
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  color: var(--ink-500);
+  font-size: 0.95rem;
+  margin-top: 0.25rem;
+}
+
+/* ---------- Progress indicator ---------- */
+.progress {
+  margin-top: 1.5rem;
+}
+
+.progress-bar {
+  height: 6px;
+  background: var(--ink-100);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.progress-bar span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--emerald-500), var(--emerald-400));
+  border-radius: 999px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.steps {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--ink-300);
+  transition: color 0.3s ease;
+}
+
+.step-num {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: var(--ink-100);
+  color: var(--ink-500);
+  transition: all 0.3s ease;
+}
+
+.step-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.step.is-active {
+  color: var(--emerald-600);
+}
+
+.step.is-active .step-num {
+  background: var(--emerald-500);
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+}
+
+.step.is-done {
+  color: var(--emerald-500);
+}
+
+.step.is-done .step-num {
+  background: var(--emerald-100);
+  color: var(--emerald-600);
+}
+
+/* ---------- Form ---------- */
+#registerForm {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-step {
+  display: none;
+  flex: 1;
+}
+
+.form-step.is-active {
+  display: block;
+}
+
+.field-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.field {
+  margin-bottom: 1.1rem;
+}
+
+.field label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-700);
+  margin-bottom: 0.4rem;
+}
+
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrap > i:first-child {
+  position: absolute;
+  left: 0.9rem;
+  color: var(--ink-300);
+  font-size: 0.9rem;
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.input-wrap:focus-within > i:first-child {
+  color: var(--emerald-500);
+}
+
+.input-wrap input,
+.input-wrap select {
+  width: 100%;
+  padding: 0.8rem 1rem 0.8rem 2.5rem;
+  border: 1.5px solid var(--ink-200);
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+  font-size: 0.9rem;
+  color: var(--ink-900);
+  background: var(--ink-100);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.input-wrap select {
+  cursor: pointer;
+  padding-right: 2.5rem;
+}
+
+.input-wrap input::placeholder {
+  color: var(--ink-300);
+}
+
+.input-wrap input:focus,
+.input-wrap select:focus {
+  border-color: var(--emerald-500);
+  background: var(--white);
+  box-shadow: var(--shadow-focus);
+}
+
+.input-wrap input.is-invalid,
+.input-wrap select.is-invalid {
+  border-color: var(--danger);
+}
+
+.input-wrap input.is-invalid:focus,
+.input-wrap select.is-invalid:focus {
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
+}
+
+.select-arrow {
+  position: absolute;
+  right: 0.9rem;
+  color: var(--ink-300);
+  font-size: 0.75rem;
+  pointer-events: none;
+}
+
+/* Password toggle */
+.toggle-pass {
+  position: absolute;
+  right: 0.6rem;
+  background: none;
+  border: none;
+  color: var(--ink-300);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: 6px;
+  transition: color 0.2s ease;
+}
+
+.toggle-pass:hover {
+  color: var(--emerald-600);
+}
+
+/* Terms checkbox */
+.terms {
+  margin: 0.25rem 0 1.25rem;
+}
+
+.checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  cursor: pointer;
+  font-size: 0.82rem;
+  color: var(--ink-500);
+  line-height: 1.4;
+}
+
+.checkbox input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.checkmark {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--ink-300);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--white);
+  transition: all 0.2s ease;
+  margin-top: 1px;
+}
+
+.checkmark i {
+  font-size: 0.6rem;
+  color: #fff;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.2s ease;
+}
+
+.checkbox input:checked + .checkmark {
+  background: var(--emerald-500);
+  border-color: var(--emerald-500);
+}
+
+.checkbox input:checked + .checkmark i {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.checkbox a {
+  color: var(--emerald-600);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.checkbox a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Navigation buttons ---------- */
+.form-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.6rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+  font-size: 0.9rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--emerald-500), var(--emerald-600));
+  color: #fff;
+  box-shadow: 0 8px 20px -6px rgba(16, 185, 129, 0.5);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 12px 26px -6px rgba(16, 185, 129, 0.6);
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background: var(--ink-100);
+  color: var(--ink-700);
+}
+
+.btn-ghost:hover {
+  background: var(--ink-200);
+}
+
+/* ---------- Login link ---------- */
+.login-link {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--ink-500);
+  margin-top: 1.5rem;
+}
+
+.login-link a {
+  color: var(--emerald-600);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Error message ---------- */
+.error-msg {
+  display: none;
+  font-size: 0.75rem;
+  color: var(--danger);
+  margin-top: 0.3rem;
+}
+
+.field.has-error .error-msg {
+  display: block;
+}
+
+/* ---------- Success overlay ---------- */
+.success-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2, 44, 34, 0.6);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.success-overlay.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.success-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 3rem 3.5rem;
+  text-align: center;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: var(--shadow-card);
+  transform: scale(0.9);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.success-overlay.is-visible .success-card {
+  transform: scale(1);
+}
+
+.success-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--emerald-400), var(--emerald-600));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.25rem;
+  color: #fff;
+  font-size: 1.8rem;
+  box-shadow: 0 12px 30px -8px rgba(16, 185, 129, 0.6);
+}
+
+.success-card h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--ink-900);
+  margin-bottom: 0.5rem;
+}
+
+.success-card p {
+  color: var(--ink-500);
+  font-size: 0.9rem;
+  margin-bottom: 1.75rem;
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 900px) {
+  .card {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .card-left {
+    min-height: 300px;
+    padding: 1.25rem 1.25rem 1.5rem;
+  }
+
+  .model-stage {
+    min-height: 220px;
+  }
+
+  model-viewer {
+    min-height: 220px;
+  }
+
+  .scene-caption {
+    display: none;
+  }
+
+  .card-right {
+    padding: 2rem 1.75rem 1.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 1rem 0.75rem;
+  }
+
+  .field-group {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .form-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .step-label {
+    display: none;
+  }
+
+  .steps {
+    justify-content: space-around;
+  }
+
+  .card-right {
+    padding: 1.75rem 1.25rem 1.5rem;
+  }
+
+  .btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.85rem;
+  }
+}

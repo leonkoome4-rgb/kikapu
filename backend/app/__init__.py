@@ -26,12 +26,14 @@ def create_app(config_class=Config):
     from app.routes.contributions import contributions_bp
     from app.routes.claims import claims_bp
     from app.routes.notifications import notifications_bp
+    from app.routes.ussd import ussd_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
     app.register_blueprint(groups_bp, url_prefix="/api/groups")
     app.register_blueprint(contributions_bp, url_prefix="/api/contributions")
     app.register_blueprint(claims_bp, url_prefix="/api/claims")
     app.register_blueprint(notifications_bp, url_prefix="/api/notifications")
+    app.register_blueprint(ussd_bp, url_prefix="/api/ussd")
 
     @app.get("/api/health")
     def health():
